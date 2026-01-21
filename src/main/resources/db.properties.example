@@ -1,0 +1,4 @@
+db.driver=org.mariadb.jdbc.Driver
+db.url=jdbc:mariadb://localhost:3306/YOUR_DATABASE_NAME
+db.username=YOUR_USERNAME
+db.password=YOUR_PASSWORD
