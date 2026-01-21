@@ -499,14 +499,14 @@ public class DatabaseConnection {
 
 ```
 ┌────────────────────────────────────────────────────────────────┐
-│              Double-Checked Locking Pattern                     │
+│              Double-Checked Locking Pattern                    │
 ├────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│   Thread A                          Thread B                   │
+│   Thread A                           Thread B                   │
 │      │                                  │                       │
 │      ▼                                  ▼                       │
-│   instance == null?                instance == null?           │
-│   (YES - first check)              (YES - first check)         │
+│   instance == null?                 instance == null?           │
+│   (YES - first check)               (YES - first check)         │
 │      │                                  │                       │
 │      ▼                                  │                       │
 │   synchronized(lock)                    │ (waiting)             │
@@ -521,14 +521,14 @@ public class DatabaseConnection {
 │      ▼                                  │                       │
 │   release lock                          │                       │
 │                                         ▼                       │
-│                               synchronized(lock)               │
+│                                synchronized(lock)               │
 │                                         │                       │
 │                                         ▼                       │
-│                               instance == null?                │
-│                               (NO - already created)           │
+│                                instance == null?                │
+│                                (NO - already created)           │
 │                                         │                       │
 │                                         ▼                       │
-│                               return existing instance         │
+│                                return existing instance         │
 │                                                                 │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -845,48 +845,48 @@ This project demonstrates proficiency in:
 
 ```
 ┌───────────────────────────────────────────────────────────────────────┐
-│                        SmartStock Class Diagram                        │
+│                        SmartStock Class Diagram                       │
 ├───────────────────────────────────────────────────────────────────────┤
-│                                                                        │
+│                                                                       │
 │  ┌─────────────────┐                      ┌─────────────────┐         │
 │  │   <<abstract>>  │                      │    Launcher     │         │
 │  │     BaseDAO     │                      ├─────────────────┤         │
 │  ├─────────────────┤                      │ +main(args)     │         │
 │  │ #getConnection()│                      └────────┬────────┘         │
-│  │ #closeResources()                               │                   │
-│  └────────┬────────┘                               ▼                   │
+│  │ #closeResources()                               │                  │
+│  └────────┬────────┘                               ▼                  │
 │           │                               ┌─────────────────┐         │
-│     ┌─────┴─────┬─────────┬─────────┐    │     MainApp     │         │
-│     │           │         │         │    │  <<Application>>│         │
-│     ▼           ▼         ▼         ▼    ├─────────────────┤         │
-│ ┌────────┐ ┌────────┐ ┌────────┐ ┌────┐ │ +start(stage)   │         │
-│ │Product │ │Category│ │Supplier│ │Txn │ └────────┬────────┘         │
-│ │  DAO   │ │  DAO   │ │  DAO   │ │DAO │          │                   │
-│ └────────┘ └────────┘ └────────┘ └────┘          ▼                   │
-│     │           │         │         │    ┌─────────────────┐         │
-│     └───────────┴────┬────┴─────────┘    │ MainController  │         │
-│                      │                    ├─────────────────┤         │
-│                      ▼                    │ -productDAO     │         │
-│              ┌──────────────┐            │ -categoryDAO    │         │
-│              │  <<Singleton>>│            │ -supplierDAO    │         │
-│              │ DatabaseConn. │◄───────────│ -transactionDAO │         │
-│              ├──────────────┤            │ +initialize()   │         │
-│              │ -instance    │            └─────────────────┘         │
+│     ┌─────┴─────┬─────────┬─────────┐     │     MainApp     │         │
+│     │           │         │         │     │  <<Application>>│         │
+│     ▼           ▼         ▼         ▼     ├─────────────────┤         │
+│ ┌────────┐ ┌────────┐ ┌────────┐ ┌────┐   │ +start(stage)   │         │
+│ │Product │ │Category│ │Supplier│ │Txn │   └────────┬────────┘         │
+│ │  DAO   │ │  DAO   │ │  DAO   │ │DAO │            │                  │
+│ └────────┘ └────────┘ └────────┘ └────┘            ▼                  │
+│     │           │         │         │      ┌─────────────────┐        │
+│     └───────────┴────┬────┴─────────┘      │ MainController  │        │
+│                      │                     ├─────────────────┤        │
+│                      ▼                     │ -productDAO     │        │
+│              ┌──────────────┐              │ -categoryDAO    │        │
+│              │  <<Singleton>>│             │ -supplierDAO    │        │
+│              │ DatabaseConn. │◄─────────── │ -transactionDAO │        │
+│              ├──────────────┤              │ +initialize()   │        │
+│              │ -instance    │              └─────────────────┘        │
 │              │ +getInstance()│                                        │
 │              │ +getConnection()                                       │
-│              └──────────────┘                                        │
-│                                                                        │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐      │
-│  │  Product   │  │  Category  │  │  Supplier  │  │Transaction │      │
-│  │  <<Model>> │  │  <<Model>> │  │  <<Model>> │  │  <<Model>> │      │
-│  ├────────────┤  ├────────────┤  ├────────────┤  ├────────────┤      │
-│  │ -productId │  │ -categoryId│  │ -supplierId│  │ -txnId     │      │
-│  │ -name      │  │ -name      │  │ -name      │  │ -productId │      │
-│  │ -sku       │  │ -description│ │ -email     │  │ -type      │      │
-│  │ -price     │  └────────────┘  │ -phone     │  │ -quantity  │      │
-│  │ -stock     │                  └────────────┘  └────────────┘      │
+│              └──────────────┘                                         │
+│                                                                       │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │
+│  │  Product   │  │  Category  │  │  Supplier  │  │Transaction │       │
+│  │  <<Model>> │  │  <<Model>> │  │  <<Model>> │  │  <<Model>> │       │
+│  ├────────────┤  ├────────────┤  ├────────────┤  ├────────────┤       │
+│  │ -productId │  │ -categoryId│  │ -supplierId│  │ -txnId     │       │
+│  │ -name      │  │ -name      │  │ -name      │  │ -productId │       │
+│  │ -sku       │  │ -description│ │ -email     │  │ -type      │       │
+│  │ -price     │  └────────────┘  │ -phone     │  │ -quantity  │       │
+│  │ -stock     │                  └────────────┘  └────────────┘       │
 │  └────────────┘                                                       │
-│                                                                        │
+│                                                                       │
 └───────────────────────────────────────────────────────────────────────┘
 ```
 
